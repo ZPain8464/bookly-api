@@ -35,4 +35,50 @@ teamsRouter
       .catch(next);
   });
 
+teamsRouter
+  .route("/:id")
+  .all((req, res, next) => {
+    TeamsService.getById(req.app.get("db"), req.params.id)
+      .then((team) => {
+        if (!team) {
+          return res.status(404).json({
+            error: { message: `Team doesn't exist` },
+          });
+        }
+        res.team = team;
+        next();
+      })
+      .catch(next);
+  })
+  .get((req, res, next) => {
+    res.json(res.team);
+  })
+  .delete((req, res, next) => {
+    TeamsService.deleteTeam(req.app.get("db"), req.params.id)
+      .then((numRowsAffected) => {
+        res.status(204).end();
+      })
+      .catch(next);
+  })
+  .patch((req, res, next) => {
+    const { title } = req.body;
+    const teamToUpdate = { title };
+
+    const numberOfValues = Object.values(teamToUpdate).filter(Boolean).length;
+    if (numberOfValues === 0) {
+      logger.error(`Invalid update without required fields`);
+      return res.status(400).json({
+        error: {
+          message: `Request body must contain either 'title'`,
+        },
+      });
+    }
+
+    TeamsService.updateTeam(req.app.get("db"), req.params.id, teamToUpdate)
+      .then((numRowsAffected) => {
+        res.status(204).end();
+      })
+      .catch(next);
+  });
+
 module.exports = teamsRouter;
