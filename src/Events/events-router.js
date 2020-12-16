@@ -23,6 +23,7 @@ eventsRouter
   .route("/")
   .get((req, res, next) => {
     const knexInstance = req.app.get("db");
+    console.log(req.query);
     EventsService.getAllEvents(knexInstance)
       .then((events) => {
         res.json(events);
@@ -37,6 +38,7 @@ eventsRouter
       description,
       date,
       title,
+      team_id,
     } = req.body;
     const newEvent = {
       time_start,
@@ -45,6 +47,7 @@ eventsRouter
       description,
       date,
       title,
+      team_id,
     };
 
     for (const [key, value] of Object.entries(newEvent))
@@ -94,6 +97,7 @@ eventsRouter
       date,
       time_start,
       time_end,
+      team_id,
     } = req.body;
     const eventToUpdate = {
       id,
@@ -103,6 +107,7 @@ eventsRouter
       date,
       time_start,
       time_end,
+      team_id,
     };
 
     const numberOfValues = Object.values(eventToUpdate).filter(Boolean).length;
@@ -110,7 +115,7 @@ eventsRouter
       logger.error(`Invalid update without required fields`);
       return res.status(400).json({
         error: {
-          message: `Request body must contain either 'description', 'title', location, date, time_start or time_end`,
+          message: `Request body must contain team_id and either 'description', 'title', location, date, time_start or time_end`,
         },
       });
     }

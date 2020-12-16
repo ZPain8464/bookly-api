@@ -6,6 +6,7 @@ const helmet = require("helmet");
 const { NODE_ENV } = require("./config");
 const eventsRouter = require("./Events/events-router");
 const teamsRouter = require("./Teams/teams-router");
+const usersRouter = require("./Users/users-router");
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+app.use("/api/users", usersRouter);
 app.use("/api/events", eventsRouter);
 app.use("/api/teams", teamsRouter);
 
