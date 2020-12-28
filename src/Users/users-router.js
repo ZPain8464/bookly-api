@@ -38,14 +38,41 @@ usersRouter
       profile_image,
       phone_number,
       password,
+      confirmPassword,
     } = req.body;
 
-    for (const field of ["email", "password", "first_name", "last_name"]) {
+    const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/;
+
+    for (const field of [
+      "email",
+      "password",
+      "confirmPassword",
+      "first_name",
+      "last_name",
+    ]) {
       if (!req.body[field]) {
         return res.status(400).json({
           error: `Missing ${field}`,
         });
       }
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        error: `Passwords don't match`,
+      });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({
+        error: `Password must be 8 or more characters`,
+      });
+    }
+
+    if (!REGEX_UPPER_LOWER_NUMBER_SPECIAL.test(password)) {
+      return res.status(400).json({
+        error: `Password must contain one uppercase character, one lowercase character, one special character, and one number`,
+      });
     }
 
     UsersService.hasUserWithEmail(knexInstance, email).then((hasUser) => {
