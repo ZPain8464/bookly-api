@@ -3,6 +3,7 @@ const xss = require("xss");
 const knex = require("knex");
 const EventsService = require("./events-service");
 const logger = require("../logger");
+const { requireAuth } = require("../middleware/jwt-auth");
 
 const eventsRouter = express.Router();
 
@@ -21,12 +22,17 @@ const serializeEvent = (event) => {
 
 eventsRouter
   .route("/")
-  .get((req, res, next) => {
+  .get(requireAuth, (req, res, next) => {
     const knexInstance = req.app.get("db");
-    console.log(req.query);
-    EventsService.getAllEvents(knexInstance)
-      .then((events) => {
-        res.json(events);
+    const creator_id = req.user.id;
+    EventsService.getTeamId(knexInstance, creator_id)
+      .then((team) => {
+        const team_id = team[0].id;
+        EventsService.getEventsByTeamId(knexInstance, team_id)
+          .then((events) => {
+            res.json(events);
+          })
+          .catch(next);
       })
       .catch(next);
   })
