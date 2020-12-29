@@ -11,7 +11,6 @@ const serializeUser = (user) => {
     last_name: user.last_name,
     date_created: user.date_created,
     profile_image: user.profile_image,
-    user_type: user.user_type,
   };
 };
 
@@ -34,7 +33,6 @@ usersRouter
       email,
       first_name,
       last_name,
-      user_type,
       profile_image,
       phone_number,
       password,
@@ -88,7 +86,6 @@ usersRouter
           first_name,
           last_name,
           password: hashedPassword,
-          user_type,
         };
 
         return UsersService.insertUser(knexInstance, newUser).then((user) => {

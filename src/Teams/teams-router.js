@@ -2,13 +2,14 @@ const express = require("express");
 const xss = require("xss");
 const knex = require("knex");
 const TeamsService = require("./teams-service");
+const { requireAuth } = require("../middleware/jwt-auth");
 const logger = require("../logger");
 
 const teamsRouter = express.Router();
 
 teamsRouter
   .route("/")
-  .get((req, res, next) => {
+  .get(requireAuth, (req, res, next) => {
     const knexInstance = req.app.get("db");
     TeamsService.getAllTeams(knexInstance)
       .then((teams) => {
@@ -16,7 +17,7 @@ teamsRouter
       })
       .catch(next);
   })
-  .post((req, res, next) => {
+  .post(requireAuth, (req, res, next) => {
     const { creator_id, title } = req.body;
     const newTeam = { creator_id, title };
     console.log(newTeam);

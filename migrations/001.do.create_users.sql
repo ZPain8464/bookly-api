@@ -6,6 +6,5 @@ CREATE TABLE users (
     password TEXT NOT NULL UNIQUE,
     date_created TIMESTAMPTZ DEFAULT now() NOT NULL,
     profile_image TEXT,
-    phone_number TEXT,
-    user_type TEXT NOT NULL
+    phone_number TEXT
 );

@@ -7,6 +7,7 @@ const { NODE_ENV } = require("./config");
 const eventsRouter = require("./Events/events-router");
 const teamsRouter = require("./Teams/teams-router");
 const usersRouter = require("./Users/users-router");
+const teamMembersRouter = require("./TeamMembers/team-members-router");
 const authRouter = require("./Auth/auth-router");
 
 const app = express();
@@ -22,6 +23,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/events", eventsRouter);
 app.use("/api/teams", teamsRouter);
+app.use("/api/team-members", teamMembersRouter);
 
 app.get("/api/bookly", (req, res) => {
   res.send("Hello, bookly!");
