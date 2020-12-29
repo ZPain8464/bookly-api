@@ -26,6 +26,7 @@ eventsRouter
     const knexInstance = req.app.get("db");
     const creator_id = req.user.id;
     const user_id = req.user.id;
+    console.log(req);
     EventsService.getTeamId(knexInstance, creator_id)
       .then((team) => {
         const team_id = team[0].id;
