@@ -26,19 +26,18 @@ eventsRouter
     const knexInstance = req.app.get("db");
     const creator_id = req.user.id;
     const user_id = req.user.id;
-    console.log(req);
-    EventsService.getTeamId(knexInstance, creator_id)
-      .then((team) => {
-        const team_id = team[0].id;
-        EventsService.getEventsByTeamId(knexInstance, team_id)
-          .then((events) => {
+    EventsService.getEventsByTeamandMemberId(knexInstance, creator_id, user_id)
+      .then((events) => {
+        const team_id = events[0].team_id;
+        EventsService.getEventsByTeamId(knexInstance, team_id).then(
+          (events) => {
             res.json(events);
-          })
-          .catch(next);
+          }
+        );
       })
       .catch(next);
   })
-  .post((req, res, next) => {
+  .post(requireAuth, (req, res, next) => {
     const {
       time_start,
       time_end,
@@ -89,14 +88,14 @@ eventsRouter
   .get((req, res, next) => {
     res.json(res.event);
   })
-  .delete((req, res, next) => {
+  .delete(requireAuth, (req, res, next) => {
     EventsService.deleteEvent(req.app.get("db"), req.params.id)
       .then((numRowsAffected) => {
         res.status(204).end();
       })
       .catch(next);
   })
-  .patch((req, res, next) => {
+  .patch(requireAuth, (req, res, next) => {
     const {
       id,
       title,

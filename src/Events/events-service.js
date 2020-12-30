@@ -1,10 +1,10 @@
 const EventsService = {
-  getAllEvents(knex) {
-    return knex.from("events").select("*");
-  },
-
-  getTeamId(knex, creator_id) {
-    return knex.select("id").from("teams").where("creator_id", creator_id);
+  getEventsByTeamandMemberId(knex, creator_id, user_id) {
+    return knex
+      .select("*")
+      .from(["teams", "team_members"])
+      .where({ creator_id })
+      .orWhere({ user_id });
   },
 
   getEventsByTeamId(knex, team_id) {
