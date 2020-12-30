@@ -11,7 +11,8 @@ teamsRouter
   .route("/")
   .get(requireAuth, (req, res, next) => {
     const knexInstance = req.app.get("db");
-    TeamsService.getAllTeams(knexInstance)
+    const creator_id = req.user.id;
+    TeamsService.getAllTeams(knexInstance, creator_id)
       .then((teams) => {
         res.json(teams);
       })

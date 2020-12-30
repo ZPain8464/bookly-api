@@ -1,6 +1,7 @@
 const TeamsService = {
-  getAllTeams(knex) {
-    return knex.from("teams").select("*");
+  getAllTeams(knex, creator_id) {
+    return knex.select("*").from("teams").where("creator_id", creator_id);
+    // return knex.from("teams").select("*");
   },
 
   getById(knex, id) {
