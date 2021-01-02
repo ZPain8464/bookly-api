@@ -25,17 +25,23 @@ eventsRouter
   .get(requireAuth, (req, res, next) => {
     const knexInstance = req.app.get("db");
     const creator_id = req.user.id;
-    const user_id = req.user.id;
-    EventsService.getEventsByTeamandMemberId(knexInstance, creator_id, user_id)
+    EventsService.getAllEvents(knexInstance)
       .then((events) => {
-        const team_id = events[0].team_id;
-        EventsService.getEventsByTeamId(knexInstance, team_id).then(
-          (events) => {
-            res.json(events);
-          }
-        );
+        res.json(events);
       })
       .catch(next);
+    // const user_id = req.user.id;
+    // EventsService.getEventsByTeamandMemberId(knexInstance, creator_id, user_id)
+    //   .then((events) => {
+    //     console.log(events);
+    //     const team_id = events[0].team_id;
+    //     EventsService.getEventsByTeamId(knexInstance, team_id).then(
+    //       (events) => {
+    //         res.json(events);
+    //       }
+    //     );
+    //   })
+    //   .catch(next);
   })
   .post(requireAuth, (req, res, next) => {
     const {

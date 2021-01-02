@@ -24,6 +24,17 @@ const UsersService = {
       .returning("*")
       .then((rows) => rows[0]);
   },
+
+  insertTeam(knex, newTeam) {
+    return knex
+      .insert(newTeam)
+      .into("teams")
+      .returning("*")
+      .then((rows) => {
+        return rows[0];
+      });
+  },
+
   hashPassword(password) {
     return bcrypt.hash(password, 12);
   },

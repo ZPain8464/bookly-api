@@ -1,5 +1,6 @@
 const express = require("express");
 const UsersService = require("./users-service");
+const xss = require("xss");
 const { requireAuth } = require("../middleware/jwt-auth");
 
 const usersRouter = express.Router();
@@ -7,11 +8,19 @@ const usersRouter = express.Router();
 const serializeUser = (user) => {
   return {
     id: user.id,
-    email: user.email,
-    first_name: user.first_name,
-    last_name: user.last_name,
+    email: xss(user.email),
+    first_name: xss(user.first_name),
+    last_name: xss(user.last_name),
     date_created: user.date_created,
-    profile_image: user.profile_image,
+    profile_image: xss(user.profile_image),
+  };
+};
+
+const serializeTeam = (team) => {
+  return {
+    id: team.id,
+    creator_id: team.creator_id,
+    title: xss(team.creator_id),
   };
 };
 
@@ -88,7 +97,13 @@ usersRouter
         };
 
         return UsersService.insertUser(knexInstance, newUser).then((user) => {
-          res.status(201).json(serializeUser(user));
+          const creator_id = user.id;
+          const title = user.email;
+          const newTeam = { creator_id, title };
+          UsersService.insertTeam(knexInstance, newTeam).then((team) => {
+            const newUserObj = { user, team };
+            res.status(201).json(newUserObj);
+          });
         });
       });
     });
