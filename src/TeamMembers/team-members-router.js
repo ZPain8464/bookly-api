@@ -16,8 +16,15 @@ teamMembersRouter
       .then((tid) => {
         const team_id = tid[0].id;
         TeamMembersService.getTeamMembersByTeamId(knexInstance, team_id)
-          .then((tms) => {
-            res.json(tms);
+          .then((teamMembers) => {
+            const users = teamMembers.map((t) => t.user_id);
+            TeamMembersService.getUsersByTeamMemberId(knexInstance, users)
+              .then((teamMemberData) => {
+                const newTeamMemberObject = { teamMemberData, teamMembers };
+                console.log(newTeamMemberObject);
+                res.json(newTeamMemberObject);
+              })
+              .catch(next);
           })
           .catch(next);
       })

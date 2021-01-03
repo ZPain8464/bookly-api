@@ -11,6 +11,10 @@ const TeamMembersService = {
     return knex.select("*").from("team_members").where("team_id", team_id);
   },
 
+  getUsersByTeamMemberId(knex, id) {
+    return knex.select("*").from("users").whereIn("id", id);
+  },
+
   insertTeamMember(knex, newTeamMember) {
     return knex
       .insert(newTeamMember)
