@@ -21,7 +21,7 @@ teamMembersRouter
             TeamMembersService.getUsersByTeamMemberId(knexInstance, users)
               .then((teamMemberData) => {
                 const newTeamMemberObject = { teamMemberData, teamMembers };
-                console.log(newTeamMemberObject);
+
                 res.json(newTeamMemberObject);
               })
               .catch(next);
