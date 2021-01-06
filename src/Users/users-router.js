@@ -141,6 +141,8 @@ usersRouter
       last_name,
       profile_image,
       phone_number,
+      password,
+      confirmPassword,
     };
 
     const numberOfValues = Object.values(userToUpdate).filter(Boolean).length;
@@ -148,15 +150,58 @@ usersRouter
       logger.error(`Invalid update without required fields`);
       return res.status(400).json({
         error: {
-          message: `Request body must contain either 'email', 'first_name', 'last_name', 'profile_image', or 'phone_number'`,
+          message: `Request body must contain either 'email', 'first_name', 'last_name', 'profile_image', 'phone_number', or 'password'`,
         },
       });
     }
+
     UsersService.updateUser(req.app.get("db"), req.params.id, userToUpdate)
       .then((numRowsAffected) => {
         res.status(204).end();
       })
       .catch(next);
   });
+usersRouter.route("/update-password/:id").patch((req, res, next) => {
+  const { password, confirmPassword } = req.body;
+  const id = req.params.id;
+  const passwordToUpdate = { id, password, confirmPassword };
+  const knexInstance = req.app.get("db");
+  const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/;
+  if (password !== confirmPassword) {
+    return res.status(400).json({
+      error: `Passwords don't match`,
+    });
+  }
+
+  if (password.length < 8) {
+    return res.status(400).json({
+      error: `Password must be 8 or more characters`,
+    });
+  }
+
+  if (!REGEX_UPPER_LOWER_NUMBER_SPECIAL.test(password)) {
+    return res.status(400).json({
+      error: `Password must contain one uppercase character, one lowercase character, one special character, and one number`,
+    });
+  }
+  return UsersService.hashPassword(password).then((hashedPassword) => {
+    const newPassword = {
+      password: hashedPassword,
+    };
+    console.log(id, newPassword);
+    return UsersService.updateUsersPassword(knexInstance, id, newPassword)
+      .then((user) => {
+        res.status(204).end();
+      })
+      .catch(next);
+  });
+});
+usersRouter.route("/unregistered-user/sign-up").get((req, res, next) => {
+  const email = req.query.email;
+
+  UsersService.getUnregisteredUser(req.app.get("db"), email).then((user) => {
+    res.status(201).json(user);
+  });
+});
 
 module.exports = usersRouter;

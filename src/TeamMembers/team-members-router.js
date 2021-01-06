@@ -31,12 +31,11 @@ teamMembersRouter
       .catch(next);
   })
   .post(requireAuth, (req, res, next) => {
-    const { team_id, user_id, invite_date, accepted } = req.body;
+    const { team_id, user_id, invite_date } = req.body;
     const newTeamMember = {
       team_id,
       user_id,
       invite_date,
-      accepted,
     };
     for (const [key, value] of Object.entries(newTeamMember))
       if (value == null) {

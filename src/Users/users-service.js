@@ -10,6 +10,10 @@ const UsersService = {
     return knex.select("*").from("users").where("id", id).first();
   },
 
+  getUnregisteredUser(knex, email) {
+    return knex.select("*").from("users").where("email", email);
+  },
+
   hasUserWithEmail(knex, email) {
     return knex("users")
       .where({ email })
@@ -41,6 +45,10 @@ const UsersService = {
 
   updateUser(knex, id, newUserFields) {
     return knex("users").where({ id }).update(newUserFields);
+  },
+
+  updateUsersPassword(knex, id, newPassField) {
+    return knex("users").where({ id }).update(newPassField);
   },
 };
 
