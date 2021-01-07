@@ -100,6 +100,7 @@ usersRouter
           const creator_id = user.id;
           const title = user.email;
           const newTeam = { creator_id, title };
+          // creates new team w/ new user
           UsersService.insertTeam(knexInstance, newTeam).then((team) => {
             const newUserObj = { user, team };
             res.status(201).json(newUserObj);

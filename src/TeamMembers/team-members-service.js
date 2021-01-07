@@ -29,6 +29,12 @@ const TeamMembersService = {
     return knex.from("team_members").select("*").where("user_id", user_id);
   },
 
+  updateAccepted(knex, user_id, accepted) {
+    return knex("team_members")
+      .where("user_id", user_id)
+      .update("accepted", accepted);
+  },
+
   deleteTeamMember(knex, user_id) {
     return knex("team_members").where({ user_id }).delete();
   },

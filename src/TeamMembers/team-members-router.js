@@ -37,6 +37,7 @@ teamMembersRouter
       user_id,
       invite_date,
     };
+    console.log(newTeamMember);
     for (const [key, value] of Object.entries(newTeamMember))
       if (value == null) {
         return res.status(400).json({
@@ -74,6 +75,25 @@ teamMembersRouter
     TeamMembersService.deleteTeamMember(req.app.get("db"), req.params.user_id)
       .then((numRowsAffected) => {
         res.status(204).end();
+      })
+      .catch(next);
+  })
+  .patch((req, res, next) => {
+    const { user_id, accepted } = req.body;
+    const newMember = { user_id, accepted };
+    const numberOfValues = Object.values(newMember).filter(Boolean).length;
+    if (numberOfValues === 0) {
+      logger.error(`Invalid update without required fields`);
+      return res.status(400).json({
+        error: {
+          message: `Request body must contain both 'user_id' and 'accepted'`,
+        },
+      });
+    }
+
+    TeamMembersService.updateAccepted(req.app.get("db"), user_id, accepted)
+      .then((numRowsAffected) => {
+        res.status(204).json("PATCH a success");
       })
       .catch(next);
   });
