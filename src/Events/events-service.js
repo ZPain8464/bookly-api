@@ -14,15 +14,6 @@ const EventsService = {
       .where("user_id", user_id);
   },
 
-  getEventsByTeamandMemberId(knex, creator_id, user_id) {
-    console.log(user_id);
-    return knex
-      .select("*")
-      .from(["teams", "team_members"])
-      .where({ creator_id })
-      .orWhere({ user_id });
-  },
-
   getEventsByTeamId(knex, team_id) {
     return knex.select("*").from("events").where("team_id", team_id);
   },

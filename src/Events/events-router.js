@@ -22,23 +22,33 @@ const serializeEvent = (event) => {
 
 eventsRouter
   .route("/")
+  // Get events for teams you manage
   .get(requireAuth, (req, res, next) => {
     const knexInstance = req.app.get("db");
     const creator_id = req.user.id;
-    const user_id = req.user.id;
-
-    EventsService.getEventsByTeamandMemberId(knexInstance, creator_id, user_id)
-      .then((data) => {
-        const filterId = data.filter((tid) => tid.id === tid.team_id);
-        const findTeamId = filterId.map((t) => t.team_id);
-        const team_id = findTeamId[0];
+    EventsService.getTeamIdByCreator(knexInstance, creator_id)
+      .then((teamId) => {
+        const team_id = teamId[0].id;
         EventsService.getEventsByTeamId(knexInstance, team_id)
           .then((events) => {
-            res.json(events);
+            res.status(201).json(events);
           })
           .catch(next);
       })
       .catch(next);
+
+    // EventsService.getEventsByTeamandMemberId(knexInstance, creator_id, user_id)
+    //   .then((data) => {
+    //     const filterId = data.filter((tid) => tid.id === tid.team_id);
+    //     const findTeamId = filterId.map((t) => t.team_id);
+    //     const team_id = findTeamId[0];
+    //     EventsService.getEventsByTeamId(knexInstance, team_id)
+    //       .then((events) => {
+    //         res.json(events);
+    //       })
+    //       .catch(next);
+    //   })
+    //   .catch(next);
   })
   .post(requireAuth, (req, res, next) => {
     const {
@@ -133,6 +143,22 @@ eventsRouter
     EventsService.updateEvent(req.app.get("db"), req.params.id, eventToUpdate)
       .then((numRowsAffected) => {
         res.status(204).end();
+      })
+      .catch(next);
+  });
+eventsRouter
+  .route("/team-members/events")
+  .get(requireAuth, (req, res, next) => {
+    const user_id = req.user.id;
+    EventsService.getTeamIdByTeamMember(req.app.get("db"), user_id)
+      .then((teamId) => {
+        console.log(teamId);
+        const team_id = teamId[0].team_id;
+        EventsService.getEventsByTeamId(req.app.get("db"), team_id)
+          .then((events) => {
+            res.status(201).json(events);
+          })
+          .catch(next);
       })
       .catch(next);
   });

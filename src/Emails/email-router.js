@@ -7,6 +7,7 @@ const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const { requireAuth } = require("../middleware/jwt-auth");
 
+// For styling emails, refer to https://sendgrid.com/docs/ui/sending-email/editor/
 const emailsRouter = express.Router();
 emailsRouter
   .route("/")
