@@ -51,4 +51,8 @@ emailsRouter
       .catch(next);
   });
 
+emailsRouter.route("/event-invite").post(requireAuth, (req, res, next) => {
+  res.status(201).json("event-invite router reached");
+});
+
 module.exports = emailsRouter;

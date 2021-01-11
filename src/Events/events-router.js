@@ -152,7 +152,6 @@ eventsRouter
     const user_id = req.user.id;
     EventsService.getTeamIdByTeamMember(req.app.get("db"), user_id)
       .then((teamId) => {
-        console.log(teamId);
         const team_id = teamId[0].team_id;
         EventsService.getEventsByTeamId(req.app.get("db"), team_id)
           .then((events) => {
