@@ -43,16 +43,35 @@ emailsRouter
   })
   .get((req, res, next) => {
     const url = req.query.url;
-    console.log(url);
+
     EmailsService.getUser(req.app.get("db"), url)
       .then((userData) => {
-        res.status(201).json(userData[0].recipient);
+        res.status(201).json(userData[0]);
       })
       .catch(next);
   });
 
 emailsRouter.route("/event-invite").post(requireAuth, (req, res, next) => {
-  res.status(201).json("event-invite router reached");
+  const { recipient, sender, sender_name, event } = req.body;
+  const url = "http://localhost:3000/invite-page/" + uuidv4();
+  const event_id = event.id;
+  const eventInviteObject = { url, recipient, event_id };
+
+  const subject = `${sender_name} invited you to an event!`;
+  const text = `${sender_name} wants to invite you to join their event ${event.title} on ${event.date} at ${event.location} from ${event.time_start} — ${event.time_end}. Click the link to confirm: ${url} `;
+  const msg = {
+    to: recipient,
+    from: sender,
+    subject: subject,
+    text: text,
+  };
+  sgMail
+    .send(msg)
+    .then((response) => {
+      EmailsService.insertInvite(req.app.get("db"), eventInviteObject);
+      res.status(201).json("email successfully sent");
+    })
+    .catch(next);
 });
 
 module.exports = emailsRouter;

@@ -189,7 +189,7 @@ usersRouter.route("/update-password/:id").patch((req, res, next) => {
     const newPassword = {
       password: hashedPassword,
     };
-    console.log(id, newPassword);
+
     return UsersService.updateUsersPassword(knexInstance, id, newPassword)
       .then((user) => {
         res.status(204).end();

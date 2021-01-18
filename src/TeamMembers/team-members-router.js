@@ -11,8 +11,6 @@ teamMembersRouter
   .get(requireAuth, (req, res, next) => {
     const knexInstance = req.app.get("db");
     const creator_id = req.user.id;
-    // Gets team_member and user's profile data
-    // SELECT * FROM team_members WHERE team_id = 9 AND accepted = true AND event_id IS null;
     TeamMembersService.getTeamId(knexInstance, creator_id)
       .then((tid) => {
         const team_id = tid[0].id;
@@ -38,6 +36,7 @@ teamMembersRouter
       user_id,
       invite_date,
     };
+
     for (const [key, value] of Object.entries(newTeamMember))
       if (value == null) {
         return res.status(400).json({
@@ -46,10 +45,10 @@ teamMembersRouter
       }
     const event_id = req.body.event_id;
     newTeamMember = { team_id, user_id, invite_date, event_id };
-
+    // Get team_member id from insertTeamMember, then update invite_sent = true
     TeamMembersService.insertTeamMember(req.app.get("db"), newTeamMember)
       .then((tmemb) => {
-        res.json(tmemb);
+        res.status(201).json("team_member created");
       })
       .catch(next);
   });
@@ -99,6 +98,51 @@ teamMembersRouter
         res.status(204).json("PATCH a success");
       })
       .catch(next);
+  });
+teamMembersRouter.route("/join-event/:user_id").patch((req, res, next) => {
+  const id = req.params.user_id;
+  const user_id = Number(id);
+  const { event_id, accepted } = req.body;
+
+  const joinEvent = { event_id, user_id, accepted };
+
+  const numberOfValues = Object.values(joinEvent).filter(Boolean).length;
+  if (numberOfValues === 0) {
+    logger.error(`Invalid update without required fields`);
+    return res.status(400).json({
+      error: {
+        message: `Request body must contain both 'user_id', 'event_id' and 'accepted'`,
+      },
+    });
+  }
+
+  TeamMembersService.updateJoinEvent(
+    req.app.get("db"),
+    event_id,
+    user_id,
+    accepted
+  )
+    .then((numRowsAffected) => {
+      res.status(204).json("Event successfully joined");
+    })
+    .catch(next);
+});
+
+teamMembersRouter
+  .route("/team-members-events/get-users/:event_id")
+  .get((req, res, next) => {
+    const eventId = req.params.event_id;
+    TeamMembersService.getTeamMembersByEventId(req.app.get("db"), eventId).then(
+      (users) => {
+        const usersIds = users.map((u) => u.user_id);
+        TeamMembersService.getUsersById(req.app.get("db"), usersIds).then(
+          (users) => {
+            console.log(users);
+            res.json(users);
+          }
+        );
+      }
+    );
   });
 
 module.exports = teamMembersRouter;

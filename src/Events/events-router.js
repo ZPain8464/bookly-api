@@ -150,16 +150,26 @@ eventsRouter
   .route("/team-members/events")
   .get(requireAuth, (req, res, next) => {
     const user_id = req.user.id;
-    EventsService.getTeamIdByTeamMember(req.app.get("db"), user_id)
-      .then((teamId) => {
-        const team_id = teamId[0].team_id;
-        EventsService.getEventsByTeamId(req.app.get("db"), team_id)
+    EventsService.getEventsYouJoined(req.app.get("db"), user_id)
+      .then((events) => {
+        const eventIds = events.map((e) => e.event_id);
+        EventsService.getEventsById(req.app.get("db"), eventIds)
           .then((events) => {
             res.status(201).json(events);
           })
           .catch(next);
       })
       .catch(next);
+    // EventsService.getTeamIdByTeamMember(req.app.get("db"), user_id)
+    //   .then((teamId) => {
+    //     const team_id = teamId[0].team_id;
+    //     EventsService.getEventsByTeamId(req.app.get("db"), team_id)
+    //       .then((events) => {
+    //         res.status(201).json(events);
+    //       })
+    //       .catch(next);
+    //   })
+    //   .catch(next);
   });
 
 module.exports = eventsRouter;

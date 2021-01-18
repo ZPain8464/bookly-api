@@ -8,12 +8,7 @@ const TeamMembersService = {
   },
 
   getTeamMembersByTeamId(knex, team_id) {
-    return knex
-      .select("*")
-      .from("team_members")
-      .where("team_id", team_id)
-      .andWhere("accepted", true)
-      .whereNull("event_id");
+    return knex.select("*").from("team_members").where("team_id", team_id);
   },
 
   getUsersByTeamMemberId(knex, id) {
@@ -30,6 +25,18 @@ const TeamMembersService = {
       });
   },
 
+  getTeamMembersByEventId(knex, event_id) {
+    return knex
+      .from("team_members")
+      .select("user_id")
+      .where("event_id", event_id)
+      .andWhere("accepted", true);
+  },
+
+  getUsersById(knex, id) {
+    return knex.select("*").from("users").whereIn("id", id);
+  },
+
   getTeamMemberByUserId(knex, user_id) {
     return knex.from("team_members").select("*").where("user_id", user_id);
   },
@@ -37,6 +44,13 @@ const TeamMembersService = {
   updateAccepted(knex, user_id, accepted) {
     return knex("team_members")
       .where("user_id", user_id)
+      .update("accepted", accepted);
+  },
+
+  updateJoinEvent(knex, event_id, user_id, accepted) {
+    return knex("team_members")
+      .where("event_id", event_id)
+      .andWhere("user_id", user_id)
       .update("accepted", accepted);
   },
 

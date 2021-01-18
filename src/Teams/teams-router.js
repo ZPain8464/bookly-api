@@ -21,7 +21,6 @@ teamsRouter
   .post(requireAuth, (req, res, next) => {
     const { creator_id, title } = req.body;
     const newTeam = { creator_id, title };
-    console.log(newTeam);
 
     for (const [key, value] of Object.entries(newTeam))
       if (value == null) {
