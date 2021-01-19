@@ -50,6 +50,10 @@ const UsersService = {
   updateUsersPassword(knex, id, newPassField) {
     return knex("users").where({ id }).update(newPassField);
   },
+
+  getUserByEmail(knex, email) {
+    return knex.select("id").from("users").where({ email });
+  },
 };
 
 module.exports = UsersService;

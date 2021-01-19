@@ -45,7 +45,7 @@ teamMembersRouter
       }
     const event_id = req.body.event_id;
     newTeamMember = { team_id, user_id, invite_date, event_id };
-    // Get team_member id from insertTeamMember, then update invite_sent = true
+
     TeamMembersService.insertTeamMember(req.app.get("db"), newTeamMember)
       .then((tmemb) => {
         res.status(201).json("team_member created");

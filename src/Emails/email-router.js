@@ -7,15 +7,12 @@ const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const { requireAuth } = require("../middleware/jwt-auth");
 
-// For styling emails, refer to https://sendgrid.com/docs/ui/sending-email/editor/
 const emailsRouter = express.Router();
 emailsRouter
   .route("/")
   .post(requireAuth, (req, res, next) => {
     // Get variables from query string
-    const { recipient, sender, name } = req.body;
-    const url = "http://localhost:3000/invite-page/" + uuidv4();
-
+    const { recipient, sender, name, url } = req.body;
     // Variables for invite_urls table
     const userInviteObject = { url, recipient };
 
@@ -53,7 +50,8 @@ emailsRouter
 
 emailsRouter.route("/event-invite").post(requireAuth, (req, res, next) => {
   const { recipient, sender, sender_name, event } = req.body;
-  const url = "http://localhost:3000/invite-page/" + uuidv4();
+  const query = uuidv4();
+  const url = "http://localhost:3000/invite-page/" + query;
   const event_id = event.id;
   const eventInviteObject = { url, recipient, event_id };
 

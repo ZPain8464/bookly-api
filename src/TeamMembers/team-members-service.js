@@ -6,9 +6,14 @@ const TeamMembersService = {
   getTeamId(knex, creator_id) {
     return knex.select("id").from("teams").where("creator_id", creator_id);
   },
-
+  // test this w/ new SQL query AND accepted IS true AND event_id IS null
   getTeamMembersByTeamId(knex, team_id) {
-    return knex.select("*").from("team_members").where("team_id", team_id);
+    return knex
+      .select("*")
+      .from("team_members")
+      .where("team_id", team_id)
+      .andWhere("accepted", true)
+      .whereNull("event_id");
   },
 
   getUsersByTeamMemberId(knex, id) {

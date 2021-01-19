@@ -2,6 +2,7 @@ const express = require("express");
 const UsersService = require("./users-service");
 const xss = require("xss");
 const { requireAuth } = require("../middleware/jwt-auth");
+const logger = require("../logger");
 
 const usersRouter = express.Router();
 
@@ -128,24 +129,15 @@ usersRouter
   .get((req, res, next) => {
     res.json(res.user);
   })
-  .patch((req, res, next) => {
-    const {
-      email,
-      first_name,
-      last_name,
-      profile_image,
-      phone_number,
-    } = req.body;
+  .patch(requireAuth, (req, res, next) => {
+    const { first_name, last_name, profile_image, phone_number } = req.body;
     const userToUpdate = {
-      email,
       first_name,
       last_name,
       profile_image,
       phone_number,
-      password,
-      confirmPassword,
     };
-
+    console.log(req.body);
     const numberOfValues = Object.values(userToUpdate).filter(Boolean).length;
     if (numberOfValues === 0) {
       logger.error(`Invalid update without required fields`);
@@ -200,8 +192,17 @@ usersRouter.route("/update-password/:id").patch((req, res, next) => {
 usersRouter.route("/unregistered-user/sign-up").get((req, res, next) => {
   const email = req.query.email;
 
-  UsersService.getUnregisteredUser(req.app.get("db"), email).then((user) => {
-    res.status(201).json(user);
+  UsersService.getUnregisteredUser(req.app.get("db"), email)
+    .then((user) => {
+      res.status(201).json(user);
+    })
+    .catch(next);
+});
+usersRouter.route("/registered-user/invite/find-user").get((req, res, next) => {
+  const email = req.query.email;
+  UsersService.getUserByEmail(req.app.get("db"), email).then((id) => {
+    const user = { email, id };
+    res.json(user);
   });
 });
 
