@@ -137,7 +137,7 @@ usersRouter
       profile_image,
       phone_number,
     };
-    console.log(req.body);
+
     const numberOfValues = Object.values(userToUpdate).filter(Boolean).length;
     if (numberOfValues === 0) {
       logger.error(`Invalid update without required fields`);

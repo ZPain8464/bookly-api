@@ -48,28 +48,36 @@ emailsRouter
       .catch(next);
   });
 
-emailsRouter.route("/event-invite").post(requireAuth, (req, res, next) => {
-  const { recipient, sender, sender_name, event } = req.body;
-  const query = uuidv4();
-  const url = "http://localhost:3000/invite-page/" + query;
-  const event_id = event.id;
-  const eventInviteObject = { url, recipient, event_id };
+emailsRouter
+  .route("/event-invite")
+  .post(requireAuth, (req, res, next) => {
+    const { recipient, sender, sender_name, event, url, parameter } = req.body;
 
-  const subject = `${sender_name} invited you to an event!`;
-  const text = `${sender_name} wants to invite you to join their event ${event.title} on ${event.date} at ${event.location} from ${event.time_start} — ${event.time_end}. Click the link to confirm: ${url} `;
-  const msg = {
-    to: recipient,
-    from: sender,
-    subject: subject,
-    text: text,
-  };
-  sgMail
-    .send(msg)
-    .then((response) => {
-      EmailsService.insertInvite(req.app.get("db"), eventInviteObject);
-      res.status(201).json("email successfully sent");
-    })
-    .catch(next);
-});
+    const event_id = event.id;
+    const eventInviteObject = { url, recipient, event_id, parameter };
+
+    const subject = `${sender_name} invited you to an event!`;
+    const text = `${sender_name} wants to invite you to join their event ${event.title} on ${event.date} at ${event.location} from ${event.time_start} — ${event.time_end}. Click the link to confirm: ${url} `;
+    const msg = {
+      to: recipient,
+      from: sender,
+      subject: subject,
+      text: text,
+    };
+
+    sgMail
+      .send(msg)
+      .then((response) => {
+        EmailsService.insertInvite(req.app.get("db"), eventInviteObject);
+        res.status(201).json("email successfully sent");
+      })
+      .catch(next);
+  })
+  .get((req, res, next) => {
+    const url = req.query.url;
+    EmailsService.getUrl(req.app.get("db"), url).then((param) => {
+      res.json(param);
+    });
+  });
 
 module.exports = emailsRouter;

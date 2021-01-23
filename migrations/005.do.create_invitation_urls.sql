@@ -1,5 +1,6 @@
 CREATE TABLE invitation_urls (
     url TEXT NOT NULL,
     recipient TEXT NOT NULL,
-    event_id INTEGER
+    event_id INTEGER,
+    parameter TEXT
 );

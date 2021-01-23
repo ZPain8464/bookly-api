@@ -137,7 +137,6 @@ teamMembersRouter
         const usersIds = users.map((u) => u.user_id);
         TeamMembersService.getUsersById(req.app.get("db"), usersIds).then(
           (users) => {
-            console.log(users);
             res.json(users);
           }
         );

@@ -11,5 +11,9 @@ const EmailsService = {
   getUser(knex, url) {
     return knex("invitation_urls").select("*").where({ url });
   },
+
+  getUrl(knex, url) {
+    return knex.from("invitation_urls").select("*").where({ url });
+  },
 };
 module.exports = EmailsService;
