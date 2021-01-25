@@ -30,6 +30,7 @@ let knexInstance;
 usersRouter
   .route("/")
   .all((req, res, next) => {
+    console.log("---in users router all---", req.app.get("db"));
     knexInstance = req.app.get("db");
     next();
   })

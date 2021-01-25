@@ -25,7 +25,7 @@ app.use(
 );
 
 app.use("/api/auth", authRouter);
-app.use("/api/users", cors(), usersRouter);
+app.use("/api/users", usersRouter);
 app.use("/api/events", eventsRouter);
 app.use("/api/teams", teamsRouter);
 app.use("/api/team-members", teamMembersRouter);
