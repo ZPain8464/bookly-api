@@ -30,7 +30,7 @@ let knexInstance;
 usersRouter
   .route("/")
   .all((req, res, next) => {
-    console.log("---in users router all---", req.app.get("db"));
+    console.log("---in users router all---");
     knexInstance = req.app.get("db");
     next();
   })
@@ -83,7 +83,13 @@ usersRouter
       });
     }
 
+    console.log(
+      "we are about to see if the user has an email",
+      typeof knexInstance
+    );
+
     UsersService.hasUserWithEmail(knexInstance, email).then((hasUser) => {
+      console.log("finished checking");
       if (hasUser) {
         return res.status(400).json({
           error: `Email already in use`,
