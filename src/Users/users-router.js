@@ -88,7 +88,7 @@ usersRouter
       typeof knexInstance
     );
 
-    UsersService.hasUserWithEmail(knexInstance, email).then((hasUser) => {
+    UsersService.hasUserWithEmail(req.app.get("db"), email).then((hasUser) => {
       console.log("finished checking");
       if (hasUser) {
         return res.status(400).json({
