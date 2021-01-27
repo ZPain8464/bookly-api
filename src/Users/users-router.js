@@ -14,6 +14,7 @@ const serializeUser = (user) => {
     last_name: xss(user.last_name),
     date_created: user.date_created,
     profile_image: xss(user.profile_image),
+    phone_number: user.phone_number,
   };
 };
 
@@ -30,7 +31,6 @@ let knexInstance;
 usersRouter
   .route("/")
   .all((req, res, next) => {
-    console.log("---in users router all---");
     knexInstance = req.app.get("db");
     next();
   })
@@ -82,11 +82,6 @@ usersRouter
         error: `Password must contain one uppercase character, one lowercase character, one special character, and one number`,
       });
     }
-
-    console.log(
-      "we are about to see if the user has an email",
-      typeof knexInstance
-    );
 
     UsersService.hasUserWithEmail(req.app.get("db"), email).then((hasUser) => {
       console.log("finished checking");
