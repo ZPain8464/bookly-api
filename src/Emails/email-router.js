@@ -2,7 +2,6 @@ const express = require("express");
 const logger = require("../logger");
 require("dotenv").config();
 const EmailsService = require("./emails-service");
-const { v4: uuidv4 } = require("uuid");
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const { requireAuth } = require("../middleware/jwt-auth");
@@ -41,7 +40,7 @@ emailsRouter
   .get((req, res, next) => {
     const url = req.query.url;
 
-    EmailsService.getUser(req.app.get("db"), url)
+    EmailsService.getUrl(req.app.get("db"), url)
       .then((userData) => {
         res.status(201).json(userData[0]);
       })
