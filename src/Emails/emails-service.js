@@ -8,9 +8,6 @@ const EmailsService = {
         return rows[0];
       });
   },
-  getUser(knex, url) {
-    return knex("invitation_urls").select("*").where({ url });
-  },
 
   getUrl(knex, url) {
     return knex.from("invitation_urls").select("*").where({ url });
