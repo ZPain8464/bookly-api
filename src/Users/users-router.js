@@ -49,6 +49,9 @@ usersRouter
       confirmPassword,
     } = req.body;
 
+    // const confirmPassword = req.body.confirmPassword;
+    // console.log(req.body.confirmPassword);
+
     const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/;
 
     for (const field of [
