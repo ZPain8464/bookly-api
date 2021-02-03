@@ -29,17 +29,6 @@ describe(`Teams service object`, function () {
     ];
   }
 
-  before("clean db", () => db("teams").truncate());
-  afterEach("clean db", () => db("teams").truncate());
-
-  after("destroy db connection", () => db.destroy());
-
-  beforeEach("clean the teams table", () =>
-    db.raw(
-      "TRUNCATE TABLE users, teams, events, team_members RESTART IDENTITY CASCADE"
-    )
-  );
-
   beforeEach("register and login", () => {
     return supertest(app)
       .post("/api/users")
@@ -54,43 +43,20 @@ describe(`Teams service object`, function () {
       });
   });
 
-  // before("clean the table", () =>
-  //   db.raw("TRUNCATE teams RESTART IDENTITY CASCADE")
-  // );
+  after("disconnect from db", () => db.destroy());
 
-  // after("disconnect from db", () => db.destroy());
+  before("clean the table", () =>
+    db.raw("TRUNCATE users, teams RESTART IDENTITY CASCADE")
+  );
 
-  // afterEach("cleanup", () =>
-  //   db.raw("TRUNCATE user, teams RESTART IDENTITY CASCADE")
-  // );
-
-  describe(`getAllTeams`, () => {
-    it("returns an empty array", () => {
-      return TeamsService.getAllTeams(db).then((teams) =>
-        // expect(teams).to.eql([])
-        console.log(teams)
-      );
+  describe(`GET /api/teams`, () => {
+    context(`Given not teams`, () => {
+      it(`responds with an empty list`, () => {
+        return supertest(app)
+          .get("/api/teams")
+          .set("Authorization", `Bearer ${authToken}`)
+          .expect(200, []);
+      });
     });
-    // context(`Given there are teams in db,`, () => {
-    //   let teams = makeTeamsArray();
-    //   beforeEach("insert teams", () => {
-    //     console.log("beforeEach teams ran");
-    //     return db
-    //       .into("users")
-    //       .insert(users)
-    //       .then(() => {
-    //         return db.into("users").insert(users);
-    //       })
-    //       .then(() => {
-    //         return db.into("teams").insert(teams);
-    //       });
-    //   });
-    //   it(`responds with an array of teams`, () => {
-    //     return supertest(app)
-    //       .get("/api/teams")
-    //       .set("Authorization", `Bearer ${authToken}`)
-    //       .expect(teams);
-    //   });
-    // });
   });
 });
