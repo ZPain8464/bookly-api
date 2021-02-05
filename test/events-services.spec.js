@@ -13,6 +13,7 @@ describe(`Teams service object`, function () {
       connection: process.env.TEST_DATABASE_URL,
     });
     app.set("db", db);
+    console.log("before in events");
   });
 
   beforeEach("register and login", () => {

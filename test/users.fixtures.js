@@ -7,6 +7,7 @@ function makeUsersArray() {
       password: "Password#3",
       profile_image: "",
       phone_number: "",
+      confirmPassword: "Password#3",
     },
   ];
 }
