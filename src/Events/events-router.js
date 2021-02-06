@@ -56,7 +56,7 @@ eventsRouter
       title,
       team_id,
     };
-
+    console.log(req.body.date);
     for (const [key, value] of Object.entries(newEvent))
       if (value == null) {
         return res.status(400).json({

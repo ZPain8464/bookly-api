@@ -143,7 +143,6 @@ describe(`Teams service object`, function () {
           creator_id: 1,
           title: "user@example.com",
         };
-        console.log(expectedTeam);
         return supertest(app)
           .get(`/api/teams/${expectedTeam.id}`)
           .set("Authorization", `Bearer ${authToken}`)
