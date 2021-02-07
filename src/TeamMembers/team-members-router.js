@@ -48,7 +48,7 @@ teamMembersRouter
 
     TeamMembersService.insertTeamMember(req.app.get("db"), newTeamMember)
       .then((tmemb) => {
-        res.status(201).json("team_member created");
+        res.status(201).json(tmemb);
       })
       .catch(next);
   });
