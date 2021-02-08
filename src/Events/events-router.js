@@ -136,12 +136,12 @@ eventsRouter
   .route("/team-members/events")
   .get(requireAuth, (req, res, next) => {
     const user_id = req.user.id;
-    EventsService.getEventsYouJoined(req.app.get("db"), user_id)
-      .then((events) => {
-        const eventIds = events.map((e) => e.event_id);
-        EventsService.getEventsById(req.app.get("db"), eventIds)
+    EventsService.getTeamIdByUserId(req.app.get("db"), user_id)
+      .then((tm) => {
+        const teamId = tm[0].team_id;
+        EventsService.getEventsByTeamId(req.app.get("db"), teamId)
           .then((events) => {
-            res.status(201).json(events);
+            res.json(events);
           })
           .catch(next);
       })

@@ -30,13 +30,13 @@ teamMembersRouter
       .catch(next);
   })
   .post(requireAuth, (req, res, next) => {
-    const { team_id, user_id, invite_date } = req.body;
+    const { team_id, user_id, invite_date, recipient, url } = req.body;
     let newTeamMember = {
       team_id,
       user_id,
       invite_date,
     };
-
+    const userInviteObject = { url, recipient };
     for (const [key, value] of Object.entries(newTeamMember))
       if (value == null) {
         return res.status(400).json({
@@ -48,7 +48,12 @@ teamMembersRouter
 
     TeamMembersService.insertTeamMember(req.app.get("db"), newTeamMember)
       .then((tmemb) => {
-        res.status(201).json(tmemb);
+        TeamMembersService.insertInvite(
+          req.app.get("db"),
+          userInviteObject
+        ).then(() => {
+          res.status(201).json(tmemb);
+        });
       })
       .catch(next);
   });

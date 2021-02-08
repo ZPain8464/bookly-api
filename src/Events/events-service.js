@@ -3,17 +3,12 @@ const EventsService = {
     return knex.select("*").from("events");
   },
 
-  getEventsYouJoined(knex, user_id) {
-    return knex
-      .select("*")
-      .from("team_members")
-      .where({ user_id })
-      .andWhere("accepted", true)
-      .whereNotNull("event_id");
+  getTeamIdByUserId(knex, user_id) {
+    return knex.select("*").from("team_members").where({ user_id });
   },
 
-  getEventsById(knex, id) {
-    return knex.select("*").from("events").whereIn("id", id);
+  getEventsByTeamId(knex, id) {
+    return knex.select("*").from("events").where("id", id);
   },
 
   getTeamIdByCreator(knex, creator_id) {
