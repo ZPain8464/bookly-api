@@ -7,8 +7,8 @@ const EventsService = {
     return knex.select("*").from("team_members").where({ user_id });
   },
 
-  getEventsByTeamId(knex, id) {
-    return knex.select("*").from("events").where("id", id);
+  getEventsByTeamId(knex, team_id) {
+    return knex.select("*").from("events").where("team_id", team_id);
   },
 
   getTeamIdByCreator(knex, creator_id) {

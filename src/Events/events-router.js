@@ -115,7 +115,7 @@ eventsRouter
       time_end,
       team_id,
     };
-
+    console.log(eventToUpdate);
     const numberOfValues = Object.values(eventToUpdate).filter(Boolean).length;
     if (numberOfValues === 0) {
       logger.error(`Invalid update without required fields`);
@@ -136,9 +136,15 @@ eventsRouter
   .route("/team-members/events")
   .get(requireAuth, (req, res, next) => {
     const user_id = req.user.id;
+
     EventsService.getTeamIdByUserId(req.app.get("db"), user_id)
       .then((tm) => {
+        if (tm[0] === undefined) {
+          const events = [];
+          return res.json(events);
+        }
         const teamId = tm[0].team_id;
+
         EventsService.getEventsByTeamId(req.app.get("db"), teamId)
           .then((events) => {
             res.json(events);
