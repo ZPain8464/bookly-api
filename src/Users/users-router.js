@@ -204,7 +204,7 @@ usersRouter.route("/registered-user/invite/find-user").get((req, res, next) => {
   const email = req.query.email;
   UsersService.getUserByEmail(req.app.get("db"), email).then((id) => {
     const user = { email, id };
-    res.json(user);
+    res.status(200).json(user);
   });
 });
 

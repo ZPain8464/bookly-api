@@ -50,6 +50,13 @@ const TeamMembersService = {
     return knex.from("team_members").select("*").where("user_id", user_id);
   },
 
+  hasUserWithEmail(knex, email) {
+    return knex("users")
+      .where({ email })
+      .first()
+      .then((user) => !!user);
+  },
+
   updateAccepted(knex, user_id, accepted) {
     return knex("team_members")
       .where("user_id", user_id)

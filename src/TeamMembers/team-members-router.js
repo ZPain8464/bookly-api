@@ -36,6 +36,7 @@ teamMembersRouter
       user_id,
       invite_date,
     };
+    console.log(req.body);
     const userInviteObject = { url, recipient };
     for (const [key, value] of Object.entries(newTeamMember))
       if (value == null) {
@@ -48,12 +49,13 @@ teamMembersRouter
 
     TeamMembersService.insertTeamMember(req.app.get("db"), newTeamMember)
       .then((tmemb) => {
-        TeamMembersService.insertInvite(
-          req.app.get("db"),
-          userInviteObject
-        ).then(() => {
-          res.status(201).json(tmemb);
-        });
+        res.status(201).json(tmemb);
+        // TeamMembersService.insertInvite(
+        //   req.app.get("db"),
+        //   userInviteObject
+        // ).then(() => {
+        //   res.status(201).json(tmemb);
+        // });
       })
       .catch(next);
   });
@@ -145,6 +147,24 @@ teamMembersRouter
             res.json(users);
           }
         );
+      }
+    );
+  });
+teamMembersRouter
+  .route("/registered-user/add-team-member/find-email")
+  .post((req, res) => {
+    const email = req.body.email.recipient;
+    TeamMembersService.hasUserWithEmail(req.app.get("db"), email).then(
+      (hasUser) => {
+        if (hasUser) {
+          return res.status(400).json({
+            error: `Email already in use`,
+          });
+        } else {
+          return res.status(200).json({
+            message: `Email doesn't exist`,
+          });
+        }
       }
     );
   });
