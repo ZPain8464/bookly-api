@@ -143,9 +143,9 @@ eventsRouter
           const events = [];
           return res.json(events);
         }
-        const teamId = tm[0].team_id;
+        const teamIds = tm.map((t) => t.team_id);
 
-        EventsService.getEventsByTeamId(req.app.get("db"), teamId)
+        EventsService.getEventsWithAllTeamIds(req.app.get("db"), teamIds)
           .then((events) => {
             res.json(events);
           })
